@@ -54,16 +54,27 @@ struct GetWidthType
     enum { width = CalculateWidth<N>::value };
     typedef typename WidthType<width>::Type Type;
 };
+template<typename T> struct typeWidth;
+template<> struct typeWidth<uint8_t>
+{ enum { value = 8 }; };
+template<> struct typeWidth<uint16_t>
+{ enum { value = 16 }; };
+template<> struct typeWidth<uint32_t>
+{ enum { value = 32 }; };
 class Bitstream
 {
 public:
-    Bitstream (const uint8_t* data, uint32_t length)
-        :   mData(data),
-            mLength(length),
+    Bitstream (uint32_t length)
+        :   mLength(length),
             mOffset(0)
     {}
+
     virtual ~Bitstream ()
     {}
+
+protected:
+    uint32_t mLength;
+    uint32_t mOffset;
 
     // get a byte where all bits are set
     // starting with the leftmost bit (from)
@@ -80,6 +91,17 @@ public:
         res = res << 8 - (from + length);
         return res;
     }
+};
+class BitstreamReader : Bitstream
+{
+public:
+    BitstreamReader (const uint8_t* data, uint32_t length)
+        :   Bitstream(length),
+            mData(data)
+    {}
+
+    virtual ~BitstreamReader ()
+    {}
 
     template<int N>
     typename GetWidthType<N>::Type get()
@@ -88,7 +110,7 @@ public:
         
         int index = (mOffset)/8; // [0,]
         int offsetInByte = (mOffset)%8; // [0,7]
-        int remainingInFirstByte = 8 - offsetInByte; // [1,6]
+        int remainingInFirstByte = 8 - offsetInByte; // [1,8]
         int bitsInFirstByte = std::min(N,remainingInFirstByte);
         res |= mData[index++] & mask(offsetInByte, bitsInFirstByte);
         mOffset += bitsInFirstByte;
@@ -108,9 +130,11 @@ public:
                 mOffset += remainingBits;
                 remainingBits = 0;
             }
-            else
+            else // the full byte is part of the result
             {
                 res <<= std::min(8,remainingBits); //make room for outstanding bits
+                // this is actually equal to 8 but compiler warns about width
+                // even though we never get here on an uint_8 type
                 res |= mData[index++];
                 mOffset += 8;
                 remainingBits -= 8;
@@ -121,8 +145,36 @@ public:
 
 private:
     const uint8_t* mData;
+};
+
+class BitstreamWriter
+{
+public:
+    BitstreamWriter(uint8_t* data, uint32_t length) :
+        mData(data),
+        mLength(length),
+        mOffset(0)
+    {}
+    virtual ~BitstreamWriter ()
+    {}
+
+    template<int N, typename width_type>
+    void put(width_type value)
+    {
+        printf("putting %d bits, width of type was: %d\n", N, typeWidth<width_type>::value);
+        int index = (mOffset)/8; // [0,]
+        int offsetInByte = (mOffset)%8; // [0,7]
+        int remainingInFirstByte = 8 - offsetInByte; // [1,8]
+        if (N <= remainingInFirstByte)
+        {
+            mData[index] |= value << (remainingInFirstByte - N);
+        }
+
+    }
+
+private:
+    uint8_t* mData;
     uint32_t mLength;
     uint32_t mOffset;
 };
-
 #endif // BITSTREAM_H_
