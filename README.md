@@ -25,6 +25,16 @@ write or read incoming/outgoing datastreams for protocols
     uint16_t a = bs.get<10>();
     uint16_t b = bs.get<6>();
 
+### Reading bits from the middle
+
+    uint8_t data[2]; 
+    data[0] = 0b00000011;
+    data[1] = 0b10101110;
+    ...
+    BitstreamReader bs(data, 2);
+    uint16_t a = bs.getWithOffset<10>(6);//will get 10 bits starting at bitoffset 6
+
+
 ### Example: Parsing RTCP Packets
 
             0                   1                   2                   3
