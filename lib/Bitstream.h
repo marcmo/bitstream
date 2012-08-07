@@ -85,7 +85,7 @@ public:
 
 protected:
     uint32_t mLength;
-    uint32_t mOffset;
+    mutable uint32_t mOffset;
 
     // get a byte where all bits are set
     // starting with the leftmost bit (from)
@@ -114,6 +114,12 @@ public:
     virtual ~BitstreamReader ()
     {}
 
+    /**
+     * take N bits from the Bitstream and construct a value of the
+     * apropriate type for it
+     *
+     * will advance the internal offset!
+     */
     template<int N>
     typename GetWidthType<N>::Type get()
     {
@@ -151,6 +157,26 @@ public:
                 remainingBits -= 8;
             }
         }
+        return res;
+    }
+
+    /**
+     * get N bits from the Bitstream, starting from offset,
+     * construct a value of the apropriate type for it
+     *
+     * will not advance the internal offset!
+     */
+    template<int N>
+    typename GetWidthType<N>::Type getWithOffset(size_t offset) const
+    {
+        uint32_t origOffset = mOffset;
+        uint32_t origLength = mLength;
+        mOffset = offset;
+        BitstreamReader* thisM = const_cast<BitstreamReader*>(this);
+        typename GetWidthType<N>::Type res = thisM->get<N>();
+        mOffset = origOffset;
+        assert(mOffset == origOffset);
+        assert(mLength == origLength);
         return res;
     }
 

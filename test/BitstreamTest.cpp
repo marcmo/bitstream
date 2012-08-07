@@ -98,6 +98,25 @@ TEST_F(BitstreamTest, getBitsInMultipleBytes)
     uint16_t a = bs.get<16>();
     EXPECT_EQ(0b1000000011100000, a);
 }
+// +---------+----------+---------+----------+
+// |0000 0000 0000 00|10 0000 0011 1000 00|00|
+// +---------+----------+---------+----------+
+TEST_F(BitstreamTest, getFromTheMiddle)
+{
+    uint8_t data[4]; 
+    data[0] = 0b00000000;
+    data[1] = 0b00000010;
+    data[2] = 0b00000011;
+    data[3] = 0b10000000;
+    BitstreamReader bs(data, 4);
+    uint16_t a = bs.getWithOffset<16>(14);
+    EXPECT_EQ(0b1000000011100000, a);
+    uint16_t b = bs.getWithOffset<16>(14);//second get should still get the same result
+    EXPECT_EQ(0b1000000011100000, b);
+    bs.get<14>(); // throw away
+    uint16_t c = bs.get<16>();
+    EXPECT_EQ(0b1000000011100000, c);//make sure mutable API still works
+}
 
 //       0          1           2           3           4       5           6       7
 // +-----------+------------+-----------+-----------+---------+---------+---------+---------+ 
@@ -252,4 +271,9 @@ TEST_F(BitstreamTest, putAndGetFun)
     EXPECT_EQ(bsr.get<17>(), e);
 }
 
-// TEST_F(BitstreamTest, putMoreThanWriterCanTake)
+// TEST_F(BitstreamTest, putMoreThanWriterCanTake) TODO
+
+
+
+
+
