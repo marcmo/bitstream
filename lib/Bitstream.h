@@ -83,6 +83,10 @@ public:
     virtual ~Bitstream ()
     {}
 
+    uint32_t size()
+    {
+        return mLength;
+    }
 protected:
     uint32_t mLength;
     mutable uint32_t mOffset;
@@ -99,11 +103,11 @@ protected:
         {
             res |= 1 << i;
         }
-        res = res << 8 - (from + length);
+        res = res << (8 - (from + length));
         return res;
     }
 };
-class BitstreamReader : Bitstream
+class BitstreamReader : public Bitstream
 {
 public:
     BitstreamReader (const uint8_t* data, uint32_t length)
@@ -184,7 +188,7 @@ private:
     const uint8_t* mData;
 };
 
-class BitstreamWriter : Bitstream
+class BitstreamWriter : public Bitstream
 {
 public:
     BitstreamWriter(uint8_t* data, uint32_t length) :
