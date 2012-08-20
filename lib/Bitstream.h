@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <algorithm>
 #include <cassert>
+#include <cstring>
 
 template<size_t WIDTH>
 struct ones;
