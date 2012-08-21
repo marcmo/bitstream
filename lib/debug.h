@@ -1,9 +1,6 @@
-#include <stdio.h>
+#ifndef DEBUG_BITSTREAM_H_
+#define DEBUG_BITSTREAM_H_
 
-void showbits(int a, int width = 8)
-{
-    for( int i = width - 1 ; i >= 0 ; i--)
-    {
-        a & (1 << i) ? printf("1") : printf("0");
-    }
-}
+
+void showbits(int a, int width = 8);
+#endif // DEBUG_BITSTREAM_H_
