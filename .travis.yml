@@ -1,0 +1,8 @@
+language: cpp
+compiler:
+  - clang
+script:
+  - rake exe:bitstream
+before_script:
+  - bundle
+
