@@ -1,3 +1,5 @@
+[![Build Status](https://secure.travis-ci.org/marcmo/bitstream.png)](http://travis-ci.org/marcmo/bitstream)
+
 # Bitstream
 
 small utility functions for serialization and de-serialization of data
@@ -17,7 +19,7 @@ write or read incoming/outgoing datastreams for protocols
 
 ### Reading bits from a stream
 
-    uint8_t data[2]; 
+    uint8_t data[2];
     data[0] = 0b00000011;
     data[1] = 0b10101110;
     ...
@@ -27,7 +29,7 @@ write or read incoming/outgoing datastreams for protocols
 
 ### Reading bits from the middle
 
-    uint8_t data[2]; 
+    uint8_t data[2];
     data[0] = 0b00000011;
     data[1] = 0b10101110;
     ...
@@ -54,10 +56,10 @@ write or read incoming/outgoing datastreams for protocols
           +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
           |                      sender's octet count                     |
           +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-    
+
 Writing the code for the parser is now straight forward:
 
-    uint8_t rtcp_packet[24]; 
+    uint8_t rtcp_packet[24];
     ... // copy data from network receive
     BitstreamReader bs(rtcp_packet, 24);
     uint8_t version = bs.get<2>();
