@@ -2,7 +2,7 @@ language: cpp
 compiler:
   - clang
 script:
-  - rake exe:bitstream
+  - args="--gtest_output=xml" bundle exec rake run:bitstream
 before_script:
   - bundle
 
