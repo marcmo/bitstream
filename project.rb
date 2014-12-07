@@ -1,6 +1,6 @@
 cxx_configuration do
   exe "bitstream",
-    :includes => ['gtest','lib'],
+    :includes => ['lib'],
     :sources => FileList['test/**/*.cpp','lib/**/*.cpp'],
-    :dependencies => ['gtest_main']
+    :dependencies => []
 end
