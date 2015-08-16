@@ -1,8 +1,5 @@
 language: cpp
-compiler:
-  - clang
+before_script: ls
 script:
-  - args="--gtest_output=xml" bundle exec rake run:bitstream
-before_script:
-  - bundle
+  - make
 
