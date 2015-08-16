@@ -1,6 +1,6 @@
 BUILD_DIR=BuildDir
 BITSTREAM_TEST=$(BUILD_DIR)/BitstreamTest.exe
-CC=g++
+CC=clang++
 CFLAGS=-c -Wall -O0 -g3 -std=c++11
 INC=-Ilib
 
